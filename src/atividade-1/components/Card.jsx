@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const Card = ({ title, onIncrement, onDecrement, value }) => {
-  
   return (
     <div className="flex flex-col justify-center items-center m-[10px] rounded-[10px] w-[200px] p-4 bg-[#a0948b] border-[3px]  border-[#6b5e66] ">
       <p className="leading-50 text-lg h-50 w-full px-7 font-medium font-firaCode">
@@ -34,7 +33,6 @@ const Card = ({ title, onIncrement, onDecrement, value }) => {
     </div>
   );
 };
-
 
 Card.propTypes = {
   title: PropTypes.string.isRequired,

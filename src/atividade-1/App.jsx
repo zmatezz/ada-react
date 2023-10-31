@@ -1,10 +1,12 @@
 import { useState } from "react";
 import Card from "./components/Card";
+import products from "../products.json";
 
 function App() {
   const [menValue, setMenValue] = useState(0);
   const [womenValue, setWomenValue] = useState(0);
   const [childrenValue, setChildrenValue] = useState(0);
+  const [quantities, setQuantities] = useState({});
 
   const handleMenIncrement = () => {
     setMenValue(menValue + 1);
@@ -36,6 +38,39 @@ function App() {
     }
   };
 
+  const calcularQuantidadeItens = () => {
+    const totalQuantities = {};
+
+    products.forEach((product) => {
+      const {
+        name,
+        quantifyPerMen,
+        quantifyPerWomen,
+        quantifyPerKid,
+        quantityPerGroup,
+        requiredGroupSize,
+      } = product;
+
+      let totalQuantity =
+        menValue * quantifyPerMen +
+        womenValue * quantifyPerWomen +
+        childrenValue * quantifyPerKid;
+
+      if (quantityPerGroup && requiredGroupSize) {
+        totalQuantity =
+          menValue + womenValue + childrenValue >= requiredGroupSize
+            ? Math.ceil(
+                (menValue + womenValue + childrenValue) / requiredGroupSize
+              ) * quantityPerGroup
+            : 0;
+      }
+
+      totalQuantities[name] = totalQuantity;
+    });
+
+    setQuantities(totalQuantities);
+  };
+
   return (
     <>
       <section className=" w-[100vw] h-[100vh] text-center bg-[#3f373c]">
@@ -50,10 +85,26 @@ function App() {
             Quantas pessoas vão participar?
           </h3>
           <div className="grid grid-cols-3 auto-rows-[200px] mt-[50px]">
-            <Card title="Homens" onIncrement={handleMenIncrement} onDecrement={handleMenDecrement} value={menValue}/>
-            <Card title="Mulheres" onIncrement={handleWomenIncrement} onDecrement={handleWomenDecrement} value={womenValue}/>
-            <Card title="Crianças" onIncrement={handleChildrenIncrement} onDecrement={handleChildrenDecrement} value={childrenValue}/>
+            <Card
+              title="Homens"
+              onIncrement={handleMenIncrement}
+              onDecrement={handleMenDecrement}
+              value={menValue}
+            />
+            <Card
+              title="Mulheres"
+              onIncrement={handleWomenIncrement}
+              onDecrement={handleWomenDecrement}
+              value={womenValue}
+            />
+            <Card
+              title="Crianças"
+              onIncrement={handleChildrenIncrement}
+              onDecrement={handleChildrenDecrement}
+              value={childrenValue}
+            />
           </div>
+          <button onClick={calcularQuantidadeItens}>Calcular</button>
 
           <label
             class="absolute cursor-pointer top-[18px] right-20 font-bold text-[#FFF]"
@@ -66,6 +117,13 @@ function App() {
             <input type="checkbox" id="input-theme" checked="checked" />
             <span className="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-[#A0948B] transition-all duration-4000 rounded-[34px] before:absolute before:content-[''] before:w-[26px] before:h-[26px] before:rounded-[50%] before:bg-[#b5aaa1] before:transition-all before:duration-4000 before:left-[4px] before:bottom-[4px]"></span>
           </label>
+          <div className="results">
+            {Object.keys(quantities).map((itemName) => (
+              <p key={itemName}>
+                {itemName}: {quantities[itemName]}
+              </p>
+            ))}
+          </div>
         </div>
       </section>
     </>
